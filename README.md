@@ -4,7 +4,7 @@ U can play now in this link **[Play](https://vieexploit.github.io/russian-roulet
 
 ## ⚖️ License & Copyright
 
-Copyright (c) [YEAR] **[@vieexploit](https://github.com/vieexploit)**
+Copyright (c) 2026 **[@vieexploit](https://github.com/vieexploit)**
 
 This project is licensed under the **CC BY-NC-ND 4.0**. 
 Basically, you are free to share this game, but you cannot sell it, and you cannot distribute any modified versions of it.
