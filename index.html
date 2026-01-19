@@ -1,1 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Russian Roulette - @vieexploit</title>
 
+<style>
+body {
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #7631c0;
+}
+
+.game-box {
+    width: 450px;
+    border: 2px solid #333;
+    padding: 20px;
+    background: #9e47e9;
+    position: relative;
+    text-align: center;
+}
+
+.watermark {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 10px;
+    color: #aaa;
+    opacity: 0.5;
+}
+
+.stage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile {
+    width: 90px;
+}
+
+.profile img {
+    width: 100%;
+    border-radius: 50%;
+    border: 2px solid #333;
+}
+
+#gun {
+    width: 100px;
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ammo-bar {
+    height: 45px;
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ammo-bar img {
+    width: 20px;
+    margin: 0 5px;
+}
+
+.btn {
+    padding: 12px 24px;
+    margin: 5px;
+    font-weight: bold;
+    border: 2px solid #333;
+    background: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    background: #333;
+    color: #fff;
+}
+
+.btn-shoot {
+    width: 100%;
+    background: #000;
+    color: #fff;
+    margin-top: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+#status {
+    margin-top: 15px;
+    font-size: 18px;
+    min-height: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-box">
+    <div class="watermark">By @vieexploit</div>
+
+    <div class="stage">
+        <div class="profile">
+            <p>me</p>
+            <img src="me.png">
+        </div>
+
+        <img id="gun" src="gun.png">
+
+        <div class="profile">
+            <p>u</p>
+            <img src="u.png">
+        </div>
+    </div>
+
+    <div id="ammo-display" class="ammo-bar"></div>
+
+    <div id="setup-controls">
+        <button class="btn" onclick="addBullet()">reload</button>
+        <button class="btn" onclick="spinCylinder()">cylinder</button>
+    </div>
+
+    <div id="play-controls" class="hidden">
+        <button class="btn-shoot" onclick="shoot()">shoo!</button>
+    </div>
+
+    <div id="again-controls" class="hidden">
+        <button class="btn" onclick="resetGame()">Play again?</button>
+    </div>
+
+    <div id="status">Load the gun</div>
+</div>
+
+<script>
+/* Game Logic by @vieexploit */
+
+let bulletCount = 0;
+let chamber = [];
+let turn = 'u';
+
+function addBullet() {
+    if (bulletCount >= 3) return;
+
+    bulletCount++;
+    document.getElementById('ammo-display').innerHTML +=
+        '<img src="ammo.png">';
+    document.getElementById('status').innerText =
+        "Bullets loaded: " + bulletCount;
+}
+
+function spinCylinder() {
+    if (bulletCount === 0) {
+        document.getElementById('status').innerText =
+            "Reload first!";
+        return;
+    }
+
+    document.getElementById('setup-controls')
+        .classList.add('hidden');
+    document.getElementById('play-controls')
+        .classList.remove('hidden');
+
+    chamber = [0,0,0,0,0,0];
+    let placed = 0;
+
+    while (placed < bulletCount) {
+        let r = Math.floor(Math.random() * 6);
+        if (chamber[r] === 0) {
+            chamber[r] = 1;
+            placed++;
+        }
+    }
+
+    document.getElementById('status').innerText =
+        "Cylinder spun! Let's play.";
+}
+
+function shoot() {
+    const gun = document.getElementById('gun');
+    const status = document.getElementById('status');
+    const btnShoot = document.querySelector('.btn-shoot');
+
+    let hit = chamber.shift();
+
+    if (hit === 1) {
+        status.innerText =
+            (turn === 'u') ? "You're dead! 😝" : "I'm dead! 😵";
+
+        gun.style.transform =
+            (turn === 'u')
+            ? "translateX(50px) rotate(10deg)"
+            : "translateX(-50px) scaleX(-1) rotate(-10deg)";
+
+        btnShoot.disabled = true;
+        btnShoot.innerText = "Game Over";
+
+        document.getElementById('play-controls')
+            .classList.add('hidden');
+        document.getElementById('again-controls')
+            .classList.remove('hidden');
+        return;
+    }
+
+    turn = (turn === 'u') ? 'me' : 'u';
+    status.innerText = "CLICK! Empty 😝, " + turn + " turn.";
+
+    gun.style.transform =
+        (turn === 'me') ? "scaleX(-1)" : "scaleX(1)";
+}
+
+function resetGame() {
+    bulletCount = 0;
+    chamber = [];
+    turn = 'u';
+
+    document.getElementById('ammo-display').innerHTML = '';
+    document.getElementById('status').innerText =
+        "Ready? Load the gun";
+    document.getElementById('gun').style.transform = "scaleX(1)";
+
+    const btnShoot = document.querySelector('.btn-shoot');
+    btnShoot.disabled = false;
+    btnShoot.innerText = "shoo!";
+
+    document.getElementById('again-controls')
+        .classList.add('hidden');
+    document.getElementById('play-controls')
+        .classList.add('hidden');
+    document.getElementById('setup-controls')
+        .classList.remove('hidden');
+
+    console.log("Game reset by @vieexploit");
+}
+</script>
+
+</body>
+</html>
